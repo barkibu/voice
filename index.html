@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barkibu Voice — Dictation that learns from the team</title>
+  <meta name="description" content="Native Mac dictation tool for the Barkibu team. Hold a key, speak, and your words appear at the cursor — with a shared dictionary that learns the company vocabulary as everyone uses it.">
+
+  <meta property="og:title" content="Barkibu Voice — Dictation that learns from the team">
+  <meta property="og:description" content="Native Mac dictation. Local. Fast. With a shared dictionary that gets smarter every time someone adds a word.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://barkibu.github.io/voice/og.png">
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1024 1024'%3E%3Crect width='1024' height='1024' rx='224' fill='%23FC4E0F'/%3E%3Crect x='384' y='232' width='256' height='380' rx='128' fill='%23fff'/%3E%3Cpath d='M 288 472 Q 288 712 512 712 Q 736 712 736 472' stroke='%23fff' stroke-width='56' fill='none' stroke-linecap='round'/%3E%3Cline x1='512' y1='712' x2='512' y2='832' stroke='%23fff' stroke-width='56' stroke-linecap='round'/%3E%3Cline x1='412' y1='832' x2='612' y2='832' stroke='%23fff' stroke-width='56' stroke-linecap='round'/%3E%3C/svg%3E">
+
+  <style>
+    :root {
+      --orange: #FC4E0F;
+      --orange-light: #FF6B33;
+      --ink: #1d1d1f;
+      --ink-soft: #424245;
+      --ink-mute: #86868b;
+      --bg: #ffffff;
+      --bg-soft: #f5f5f7;
+      --bg-card: #fafafa;
+      --border: #e5e5ea;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --ink: #f5f5f7;
+        --ink-soft: #d2d2d7;
+        --ink-mute: #86868b;
+        --bg: #000000;
+        --bg-soft: #161719;
+        --bg-card: #1c1d20;
+        --border: #2a2a2e;
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+    /* Nav */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: color-mix(in srgb, var(--bg) 85%, transparent);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px; max-width: 1080px; margin: 0 auto;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 600; font-size: 15px; letter-spacing: -0.2px;
+      color: var(--ink); text-decoration: none;
+    }
+    .nav-icon { width: 28px; height: 28px; border-radius: 7px; }
+    .nav-cta {
+      font-size: 13px; font-weight: 500;
+      padding: 7px 14px; border-radius: 980px;
+      background: var(--ink); color: var(--bg);
+      text-decoration: none;
+      transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: .85; }
+
+    /* Hero */
+    .hero {
+      padding: 96px 0 80px;
+      background: radial-gradient(ellipse 60% 80% at 50% 0%, color-mix(in srgb, var(--orange) 12%, transparent) 0%, transparent 70%);
+      text-align: center;
+    }
+    .hero-icon {
+      width: 96px; height: 96px;
+      border-radius: 24px;
+      margin: 0 auto 32px;
+      box-shadow: 0 18px 40px -10px color-mix(in srgb, var(--orange) 50%, transparent);
+    }
+    .hero h1 {
+      font-size: clamp(40px, 6vw, 64px);
+      font-weight: 700; line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+    }
+    .hero h1 .accent {
+      background: linear-gradient(135deg, var(--orange-light), var(--orange));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero p {
+      font-size: clamp(17px, 1.6vw, 21px);
+      color: var(--ink-soft);
+      max-width: 640px; margin: 0 auto 40px;
+    }
+    .hero-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 15px; font-weight: 500;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--orange-light), var(--orange));
+      color: white; border-radius: 980px;
+      text-decoration: none;
+      box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--orange) 60%, transparent);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .hero-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 36px -8px color-mix(in srgb, var(--orange) 70%, transparent);
+    }
+    .hero-meta {
+      display: flex; gap: 18px; justify-content: center;
+      margin-top: 18px; font-size: 13px; color: var(--ink-mute);
+    }
+
+    /* Sections */
+    section { padding: 80px 0; }
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 13px; font-weight: 600;
+      color: var(--orange);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(28px, 3.5vw, 42px);
+      font-weight: 700; line-height: 1.1;
+      letter-spacing: -0.015em;
+      margin-bottom: 16px;
+    }
+    .section-lead {
+      font-size: 18px; color: var(--ink-soft);
+      max-width: 640px;
+    }
+
+    /* Feature grid */
+    .features {
+      background: var(--bg-soft);
+    }
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 48px;
+    }
+    .feature-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+    }
+    .feature-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--orange) 14%, transparent);
+      display: grid; place-items: center;
+      margin-bottom: 16px;
+      color: var(--orange);
+    }
+    .feature-icon svg { width: 22px; height: 22px; }
+    .feature-card h3 {
+      font-size: 17px; font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .feature-card p {
+      font-size: 14px; color: var(--ink-soft);
+    }
+
+    /* Community spotlight */
+    .community .wrap {
+      display: grid; gap: 56px;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+    }
+    @media (max-width: 800px) {
+      .community .wrap { grid-template-columns: 1fr; }
+    }
+    .community-visual {
+      background: linear-gradient(135deg, color-mix(in srgb, var(--orange) 5%, var(--bg-soft)), var(--bg-soft));
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+    .flow-step {
+      display: flex; align-items: flex-start; gap: 14px;
+      padding: 14px 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+    .flow-step:last-child { margin-bottom: 0; }
+    .flow-num {
+      flex-shrink: 0;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: white;
+      display: grid; place-items: center;
+      font-size: 12px; font-weight: 600;
+    }
+    .flow-text strong {
+      display: block; font-size: 14px; font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .flow-text span {
+      font-size: 13px; color: var(--ink-mute);
+    }
+    .flow-arrow {
+      color: var(--orange);
+      text-align: center;
+      font-size: 18px;
+      margin: -4px 0;
+      opacity: .5;
+    }
+
+    /* Privacy */
+    .privacy {
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg-soft) 100%);
+    }
+    .privacy-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 48px;
+    }
+    @media (max-width: 700px) { .privacy-grid { grid-template-columns: 1fr; } }
+    .privacy-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+    }
+    .privacy-card.yes {
+      border-color: color-mix(in srgb, #34D399 50%, var(--border));
+    }
+    .privacy-card.no {
+      border-color: color-mix(in srgb, var(--ink) 25%, var(--border));
+    }
+    .privacy-card h4 {
+      font-size: 15px; font-weight: 600;
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .privacy-card.yes h4::before {
+      content: ""; width: 16px; height: 16px;
+      border-radius: 50%; background: #34D399;
+      flex-shrink: 0;
+    }
+    .privacy-card.no h4::before {
+      content: ""; width: 16px; height: 16px;
+      border-radius: 50%; background: var(--ink);
+      opacity: .25;
+      flex-shrink: 0;
+    }
+    .privacy-card ul {
+      list-style: none;
+      font-size: 14px;
+      color: var(--ink-soft);
+    }
+    .privacy-card li {
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .privacy-card li:last-child { border-bottom: none; }
+
+    /* Steps */
+    .steps {
+      background: var(--bg);
+    }
+    .step-list {
+      counter-reset: step;
+      max-width: 720px;
+      margin: 48px auto 0;
+    }
+    .step {
+      counter-increment: step;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+    .step:last-child { border-bottom: none; }
+    .step::before {
+      content: counter(step);
+      grid-column: 1;
+      font-family: -apple-system, "SF Mono", monospace;
+      font-size: 13px; font-weight: 600;
+      color: var(--orange);
+      background: color-mix(in srgb, var(--orange) 10%, transparent);
+      width: 40px; height: 40px;
+      display: grid; place-items: center;
+      border-radius: 50%;
+    }
+    .step h3 {
+      font-size: 17px; font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .step p {
+      font-size: 15px; color: var(--ink-soft);
+    }
+
+    /* CTA */
+    .cta-block {
+      background: linear-gradient(135deg, var(--orange-light), var(--orange));
+      border-radius: 24px;
+      padding: 56px 32px;
+      text-align: center;
+      color: white;
+      margin: 40px 0;
+    }
+    .cta-block h2 {
+      font-size: clamp(26px, 3vw, 36px);
+      font-weight: 700;
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+    .cta-block p {
+      font-size: 16px;
+      opacity: .92;
+      max-width: 480px;
+      margin: 0 auto 28px;
+    }
+    .cta-block .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 15px; font-weight: 600;
+      padding: 14px 28px;
+      background: white;
+      color: var(--orange);
+      border-radius: 980px;
+      text-decoration: none;
+      transition: transform .2s;
+    }
+    .cta-block .btn:hover { transform: translateY(-1px); }
+
+    /* FAQ */
+    .faq { background: var(--bg-soft); }
+    .faq-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .faq-item summary {
+      padding: 18px 22px;
+      cursor: pointer;
+      font-size: 15px; font-weight: 500;
+      list-style: none;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .faq-item summary::-webkit-details-marker { display: none; }
+    .faq-item summary::after {
+      content: "+"; color: var(--orange);
+      font-size: 22px; line-height: 1;
+      transition: transform .2s;
+    }
+    .faq-item[open] summary::after { transform: rotate(45deg); }
+    .faq-item .answer {
+      padding: 0 22px 18px;
+      font-size: 14px; color: var(--ink-soft);
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      font-size: 13px;
+      color: var(--ink-mute);
+    }
+    footer a { color: var(--ink-mute); text-decoration: underline; }
+    footer .credit { margin-top: 12px; opacity: .8; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <svg class="nav-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+        <rect width="1024" height="1024" rx="224" fill="#FC4E0F"/>
+        <rect x="384" y="232" width="256" height="380" rx="128" fill="#fff"/>
+        <path d="M 288 472 Q 288 712 512 712 Q 736 712 736 472" stroke="#fff" stroke-width="56" fill="none" stroke-linecap="round"/>
+        <line x1="512" y1="712" x2="512" y2="832" stroke="#fff" stroke-width="56" stroke-linecap="round"/>
+        <line x1="412" y1="832" x2="612" y2="832" stroke="#fff" stroke-width="56" stroke-linecap="round"/>
+      </svg>
+      Barkibu Voice
+    </a>
+    <a href="#download" class="nav-cta">Download</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="wrap">
+    <svg class="hero-icon" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#FF6B33"/>
+          <stop offset="100%" stop-color="#FC4E0F"/>
+        </linearGradient>
+      </defs>
+      <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+      <rect x="384" y="232" width="256" height="380" rx="128" fill="#fff"/>
+      <path d="M 288 472 Q 288 712 512 712 Q 736 712 736 472" stroke="#fff" stroke-width="56" fill="none" stroke-linecap="round"/>
+      <line x1="512" y1="712" x2="512" y2="832" stroke="#fff" stroke-width="56" stroke-linecap="round"/>
+      <line x1="412" y1="832" x2="612" y2="832" stroke="#fff" stroke-width="56" stroke-linecap="round"/>
+    </svg>
+    <h1>Dictation that <span class="accent">learns from the team</span></h1>
+    <p>A native Mac app for the Barkibu team. Hold a key, speak, and your words appear at the cursor. The dictionary gets smarter every time someone adds a new word.</p>
+    <a href="#download" class="hero-cta">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1a.5.5 0 0 1 .5.5v8.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 1 1 .708-.708L7.5 10.293V1.5A.5.5 0 0 1 8 1zM2.5 14a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11z"/></svg>
+      Download for Mac
+    </a>
+    <div class="hero-meta">
+      <span>Free for the Barkibu team</span>
+      <span>·</span>
+      <span>macOS 14.2+</span>
+      <span>·</span>
+      <span>Apple Silicon</span>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="section-eyebrow">What it does</div>
+    <h2 class="section-title">A faster way to write at work</h2>
+    <p class="section-lead">Hold your hotkey, speak naturally, release. The text shows up wherever your cursor is — Slack, email, Notion, code editor, anywhere.</p>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <h3>0.13s latency</h3>
+        <p>Local Apple Neural Engine model. The pause between speaking and seeing text is barely there.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>100% on-device</h3>
+        <p>Audio never leaves your Mac. Works on a plane, on a bad connection, in any meeting room.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </div>
+        <h3>14 languages</h3>
+        <p>Spanish, English, German, French, Italian, Portuguese, Finnish, Greek, Romanian, Polish, Croatian, Slovak, Lithuanian. Every Barkibu market.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h3>Free forever</h3>
+        <p>No license, no per-seat fee, no Wispr Flow subscription. Built on Muesli (open source, MIT).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="community">
+  <div class="wrap">
+    <div>
+      <div class="section-eyebrow">The team feature</div>
+      <h2 class="section-title">A dictionary that learns as we use it</h2>
+      <p class="section-lead">Every word you add to your personal dictionary, like a breed name or a claim type, gets reviewed and shared with the rest of the team. After a few weeks, Barkibu Voice knows the company vocabulary the way humans do.</p>
+      <p style="margin-top: 24px; font-size: 14px; color: var(--ink-mute);">
+        We start with 89 seed entries: every Barkibu market, common dog and cat breeds, claim types, veterinary terms, and the names of internal tools.
+      </p>
+    </div>
+    <div class="community-visual">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-text">
+          <strong>You add a word</strong>
+          <span>"piómetra" → "piómetra" in your personal dictionary</span>
+        </div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-text">
+          <strong>It auto-submits to the queue</strong>
+          <span>No button to click. Pablo or Álvaro reviews in Supabase Studio.</span>
+        </div>
+      </div>
+      <div class="flow-arrow">↓</div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-text">
+          <strong>Everyone gets it</strong>
+          <span>Within 30 minutes, every team Mac fetches the new word and applies it to dictation.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="privacy">
+  <div class="wrap">
+    <div class="section-eyebrow">Privacy</div>
+    <h2 class="section-title">What leaves your Mac, and what doesn't</h2>
+    <p class="section-lead">Auto-submit only sends the words you explicitly add to the dictionary. Your audio, your transcripts, and your notes stay local. Mark any entry as private if you don't want it shared.</p>
+
+    <div class="privacy-grid">
+      <div class="privacy-card yes">
+        <h4>Sent to Supabase on auto-submit</h4>
+        <ul>
+          <li>The word + replacement you typed</li>
+          <li>The matching threshold (a number)</li>
+          <li>The category (breed, claim, market…)</li>
+          <li>Your @barkibu.com email</li>
+          <li>The app version</li>
+        </ul>
+      </div>
+      <div class="privacy-card no">
+        <h4>Never sent. Anywhere.</h4>
+        <ul>
+          <li>Audio recordings</li>
+          <li>Dictation transcripts</li>
+          <li>Other words from your dictionary</li>
+          <li>Anything marked 🔒 private</li>
+          <li>Hardware identifiers</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="steps" id="how">
+  <div class="wrap">
+    <div class="section-eyebrow">How to start</div>
+    <h2 class="section-title">Three steps. Two minutes.</h2>
+
+    <div class="step-list">
+      <div class="step">
+        <div>
+          <h3>Install the app</h3>
+          <p>Download the DMG, drag Barkibu Voice into Applications, open it. Onboarding walks you through microphone, accessibility, and hotkey permissions.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div>
+          <h3>Sign in with your Barkibu email</h3>
+          <p>Settings → Community Dictionary → enter your <code style="font-family: 'SF Mono', monospace; font-size: 13px;">@barkibu.com</code> email. You get a 6-digit code in seconds. Paste it in.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div>
+          <h3>Speak</h3>
+          <p>Hold your hotkey (default: Right Option), say what you want to write, release. The text appears wherever the cursor is. Add a custom word any time, the team gets it after the next sync.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="download">
+  <div class="wrap">
+    <div class="cta-block">
+      <h2>Ready to ditch Wispr Flow?</h2>
+      <p>The DMG is signed, notarized by Apple, and ready to install. Ask Pablo for the latest link if you don't have it yet.</p>
+      <a href="mailto:pablo@barkibu.com?subject=Barkibu%20Voice%20DMG&body=Hey%20Pablo%2C%20can%20you%20send%20me%20the%20latest%20Barkibu%20Voice%20DMG%3F" class="btn">
+        Request the DMG
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 2a.5.5 0 0 0 0 1h6.793l-9.147 9.146a.5.5 0 0 0 .708.708L13 3.707V10.5a.5.5 0 0 0 1 0v-8a.5.5 0 0 0-.5-.5h-8z"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="wrap">
+    <div class="section-eyebrow">FAQ</div>
+    <h2 class="section-title">Common questions</h2>
+
+    <div style="max-width: 720px; margin: 40px auto 0;">
+      <details class="faq-item">
+        <summary>Why a fork instead of Wispr Flow?</summary>
+        <div class="answer">Wispr Flow is paid per seat. Across the Barkibu team that adds up. Barkibu Voice is built on top of Muesli (open source, MIT) and runs every transcription on the device — no per-minute API cost, no recurring license. Plus we control the dictionary.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Will my Spanish dictation get translated to English?</summary>
+        <div class="answer">No. The Whisper backend gets a language hint from Settings → Dictation language. Pick Spanish (or any of the 13 markets) and decoding is locked to that language. The "spoken Spanish, transcribed English" bug some of us saw on Parakeet is fixed by switching to Whisper Large Turbo with the language hint.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Can I keep some words private?</summary>
+        <div class="answer">Yes. Each entry in your dictionary has a 🔒 toggle. Flip it on, and that word stays on your Mac, never gets auto-submitted to the team queue. Useful for client names, internal codenames, or anything you don't want propagated.</div>
+      </details>
+      <details class="faq-item">
+        <summary>What if I don't sign in?</summary>
+        <div class="answer">The app still works as a local dictation tool. You just don't get the community dictionary, and the words you add stay on your Mac. Sign in any time later from Settings.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Where do approved words live?</summary>
+        <div class="answer">In a Supabase project owned by Barkibu (eu-west-3). Reads are scoped to <code>@barkibu.com</code> JWTs via row-level security. Writes to the approved dictionary go through Pablo or Álvaro reviewing the queue in Supabase Studio. Nobody outside Barkibu has access.</div>
+      </details>
+      <details class="faq-item">
+        <summary>Does it work on Intel Macs?</summary>
+        <div class="answer">It builds and runs, but the on-device transcription model is optimized for the Apple Neural Engine. On Intel it falls back to CPU and you'll feel the latency. Apple Silicon (M1 and up) is what we target.</div>
+      </details>
+      <details class="faq-item">
+        <summary>How do I add a new word to the team?</summary>
+        <div class="answer">Don't think about it. Just add it to your personal dictionary like you would normally, and the auto-submit hook proposes it to the review queue. If approved, it lands on every other Mac on the next sync (≤30 minutes).</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>Barkibu Voice · Internal dictation tool for the Barkibu team</div>
+    <div class="credit">
+      Built on top of <a href="https://github.com/pHequals7/muesli" target="_blank" rel="noopener">Muesli</a>
+      · MIT licensed
+      · Source on
+      <a href="https://github.com/barkibu/voice-to-text" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

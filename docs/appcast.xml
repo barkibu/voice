@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>Barkibu Voice</title>
+        <link>https://barkibu.github.io/voice/appcast.xml</link>
+        <description>Updates for Barkibu Voice (internal Barkibu dictation tool).</description>
+        <language>en</language>
+        <item>
+            <title>Version 0.7.0</title>
+            <pubDate>Mon, 27 Apr 2026 08:29:55 +0000</pubDate>
+            <sparkle:version>0.7.0</sparkle:version>
+            <sparkle:shortVersionString>0.7.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.2</sparkle:minimumSystemVersion>
+            <link>https://github.com/barkibu/voice/releases/tag/v0.7.0</link>
+
+            <enclosure url="https://github.com/barkibu/voice/releases/download/v0.7.0/Barkibu-Voice-0.7.0.dmg" type="application/octet-stream" sparkle:edSignature="1WCK/NjWhJVdMDAk3vZ2jbpcynfSNnW+rl69BLl5wy8ue8DB2Igweb3iOmmRAsvcradyMHKohLYmHVqPtzK1Cg==" length="62959707"/>
+        </item>
+    </channel>
+</rss>

@@ -5,7 +5,17 @@
         <link>https://barkibu.github.io/voice/appcast.xml</link>
         <description>Updates for Barkibu Voice (internal Barkibu dictation tool).</description>
         <language>en</language>
-                                <item>
+                                        <item>
+            <title>Version 0.8.1</title>
+            <pubDate>Mon, 27 Apr 2026 17:52:47 +0000</pubDate>
+            <sparkle:version>0.8.1</sparkle:version>
+            <sparkle:shortVersionString>0.8.1</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.2</sparkle:minimumSystemVersion>
+            <link>https://github.com/barkibu/voice/releases/tag/v0.8.1</link>
+
+            <enclosure url="https://github.com/barkibu/voice/releases/download/v0.8.1/Barkibu-Voice-0.8.1.dmg" type="application/octet-stream" sparkle:edSignature="gVtdI6SxKvuybFrWm9l0HvyqgPk5bTlFAcQ+TEZHtsVbcSnIB8HiMsRD8q0ya/Sfg5eClnQoJ2j+AN9T2Jn2Dw==" length="63010387"/>
+        </item>
+<item>
             <title>Version 0.8.0</title>
             <pubDate>Mon, 27 Apr 2026 15:21:46 +0000</pubDate>
             <sparkle:version>0.8.0</sparkle:version>

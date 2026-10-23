@@ -6,6 +6,15 @@
         <description>Updates for Barkibu Voice (internal Barkibu dictation tool).</description>
         <language>en</language>
         <item>
+            <title>Version 1.0.10</title>
+            <pubDate>Fri, 23 Oct 2026 08:12:34 +0000</pubDate>
+            <sparkle:version>1.0.10</sparkle:version>
+            <sparkle:shortVersionString>1.0.10</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.2</sparkle:minimumSystemVersion>
+            <link>https://github.com/barkibu/voice/releases/tag/v1.0.10</link>
+            <enclosure url="https://github.com/barkibu/voice/releases/download/v1.0.10/Barkibu-Voice-1.0.10.dmg" type="application/octet-stream" sparkle:edSignature="vZqKAriZQU1KkymDncjItwZv7AwLDcLAsDLXtxbM5cBljj1Wrn97n25+Taq+lOuViyN70j5vJhLxjB1knv5FBQ==" length="15047013"/>
+        </item>
+        <item>
             <title>Version 1.0.9</title>
             <pubDate>Fri, 29 May 2026 08:37:24 +0000</pubDate>
             <sparkle:version>1.0.9</sparkle:version>
